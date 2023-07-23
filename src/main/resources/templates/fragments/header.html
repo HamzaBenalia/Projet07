@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8"/>
+</head>
+
+<body>
+
+<div th:fragment="header">
+
+  <div class="row">
+    <div class="col-6">
+      <span class="h3">Poseidon</span><br>
+      <a href="/">Bid List</a>&nbsp;|&nbsp;
+      <a href="/curvePointHomePage">Curve Points</a>&nbsp;|&nbsp;
+      <a href="/ratingHomePage">Ratings</a>&nbsp;|&nbsp;
+      <a href="/tradeHomePage">Trade</a>&nbsp;|&nbsp;
+      <a href="/ruleNameHomePage">Rule</a>
+    </div>
+      <br><span sec:authorize="hasRole('ADMIN')"><a href="/user">Users</a> |</span> <a href="/app-logout">Logout</a>
+<!--    sec:authorize="hasRole('ADMIN')"-->
+    </div>
+  </div>
+</div>
+</body>

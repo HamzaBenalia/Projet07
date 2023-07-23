@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="ISO-8859-1">
+  <title>CurvePoint Management System</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<body>
+<div class="container">
+  <h1>CurvePoint Management System</h1>
+  <hr>
+  <h2>Save RuleName</h2>
+
+  <form action="#" th:action="@{/saveCurvePoint}" th:object="${curvePointForm}" method="POST">
+
+    <input type="text" th:field="*{curveId}" placeholder="curveId" class="form-control mb-4 col-4" >
+
+    <p th:errors="*{curveId}" class="text-danger" th:if="${#fields.hasErrors('curveId')}"></p>
+
+    <input type="text" th:field="*{term}" placeholder="term" class="form-control mb-4 col-4">
+
+    <p th:errors="*{term}" class="text-danger" th:if="${#fields.hasErrors('term')}"></p>
+
+
+    <input type="text" th:field="*{value}" placeholder="value" class="form-control mb-4 col-4">
+
+    <p th:errors="*{value}" class="text-danger" th:if="${#fields.hasErrors('value')}"></p>
+
+
+    <button type="submit" class="btn btn-info col-2"> Save CurvePoint </button>
+  </form>
+
+  <hr>
+
+  <a th:href="@{/ruleNameHomePage}"> Back to CurvePoint List</a>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+  <html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="ISO-8859-1">
+    <title>bidList Management System</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+  </head>
+  <body>
+  <div class="container">
+
+    <div th:insert="fragments/header :: header"></div>
+
+
+  <h1>bid List</h1>
+
+  <a th:href="@{/showNewBidListForm}" class="btn btn-primary btn-sm mb-3"> Add A bidList List </a>
+
+  <table border="2" class="table table-striped table-responsive-md">
+
+    <thead>
+    <tr>
+      <th>id</th>
+      <th>Account</th>
+      <th>Type</th>
+      <th>Bid Quantity</th>
+      <th> Actions </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="bid : ${bidListList}">
+      <td th:text="${bid.bidListId}"></td>
+      <td th:text="${bid.account}"></td>
+      <td th:text="${bid.type}"></td>
+      <td th:text="${bid.bidQuantity}"></td>
+<!--      <td th:text="${curvePoint.term}"></td>-->
+<!--      <td th:text="${curvePoint.value}"></td>-->
+
+      <td>
+        <a th:href="@{/showFormForBidListUpdate/{id} (id=${bid.bidListId})}" class="btn btn-primary">Update</a>
+        <a th:href="@{deleteBidList/{id} (id=${bid.bidListId})}" class="btn btn-danger">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
