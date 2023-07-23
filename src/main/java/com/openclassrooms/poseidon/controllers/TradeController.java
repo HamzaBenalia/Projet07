@@ -1,7 +1,9 @@
 package com.openclassrooms.poseidon.controllers;
 
 import com.openclassrooms.poseidon.domain.Trade;
+import com.openclassrooms.poseidon.forms.TradeForm;
 import com.openclassrooms.poseidon.services.TradeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,17 +28,24 @@ public class TradeController {
     }
 
     @GetMapping("/showNewTradeForm")
-    public String showNewTradeForm(Model model, Trade trade) { // TradeForm instead of Trade
+    public String showNewTradeForm(Model model) { // TradeForm instead of Trade
         // create model attribute to bind form data
-
-        model.addAttribute("trade", trade);
+        TradeForm tradeForm = new TradeForm();
+        model.addAttribute("tradeForm", tradeForm);
         return "newTrade";
     }
 
     @PostMapping("/saveTrade")
-    public String saveTrade(@ModelAttribute("tradeForm") Trade trade,
+    public String saveTrade(@Valid @ModelAttribute("tradeForm") TradeForm tradeForm,
                             BindingResult result, Model model) {
-        // setters and getters
+
+        if (result.hasErrors()) {
+            return "newTrade";
+        }
+        Trade trade = new Trade();
+        trade.setAccount(tradeForm.getAccount());
+        trade.setBuyQuantity(Double.valueOf(tradeForm.getBuyQuantity()));
+        trade.setType(tradeForm.getType());
         tradeService.saveTrade(trade);
         return "redirect:/tradeHomePage";
     }

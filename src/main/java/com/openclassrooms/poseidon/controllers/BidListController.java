@@ -48,14 +48,9 @@ public class BidListController {
         }
 
         BidList bidList = new BidList();
-
-        // Conversion explicite de bidListId en Long
         bidList.setBidListId(Long.valueOf(bidListForm.getBidListId()));
-
         bidList.setAccount(bidListForm.getAccount());
         bidList.setType(bidListForm.getType());
-
-        // Conversion explicite de bidQuantity en Double
         bidList.setBidQuantity(Double.valueOf(bidListForm.getBidQuantity()));
 
         bidListService.saveBidList(bidList);

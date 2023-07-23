@@ -21,5 +21,4 @@ public class UserForm {
 
     @NotBlank(message = "role is required")
     private String role;
-
 }

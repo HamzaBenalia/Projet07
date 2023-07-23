@@ -16,16 +16,23 @@
   <form action="#" th:action="@{/saveRuleName}" th:object="${ruleNameForm}" method="POST">
 
     <input type="text" th:field="*{description}" placeholder="description" class="form-control mb-4 col-4">
+    <p th:errors="*{description}" class="text-danger" th:if="${#fields.hasErrors('description')}"></p>
 
     <input type="text" th:field="*{json}" placeholder="json" class="form-control mb-4 col-4">
+    <p th:errors="*{json}" class="text-danger" th:if="${#fields.hasErrors('json')}"></p>
 
     <input type="text" th:field="*{name}" placeholder="name" class="form-control mb-4 col-4">
+    <p th:errors="*{name}" class="text-danger" th:if="${#fields.hasErrors('name')}"></p>
 
     <input type="text" th:field="*{sqlPart}" placeholder="sqlPart" class="form-control mb-4 col-4">
+    <p th:errors="*{sqlPart}" class="text-danger" th:if="${#fields.hasErrors('sqlPart')}"></p>
 
     <input type="text" th:field="*{sqlStr}" placeholder="sqlStr" class="form-control mb-4 col-4">
+    <p th:errors="*{sqlStr}" class="text-danger" th:if="${#fields.hasErrors('sqlStr')}"></p>
 
     <input type="text" th:field="*{template}" placeholder="template" class="form-control mb-4 col-4">
+    <p th:errors="*{template}" class="text-danger" th:if="${#fields.hasErrors('template')}"></p>
+
 
     <button type="submit" class="btn btn-info col-2"> Save RuleName </button>
   </form>

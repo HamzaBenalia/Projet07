@@ -14,19 +14,24 @@
   <hr>
   <h2>Save User</h2>
 
-  <form action="#" th:action="@{/saveUser}" th:object="${userForm}" method="POST">
+  <form action="#" th:action="@{/user/saveUser}" th:object="${userForm}" method="POST">
 
     <input type="text" th:field="*{username}" placeholder="Username" class="form-control mb-4 col-4">
+    <p th:errors="*{username}" class="text-danger" th:if="${#fields.hasErrors('username')}"></p>
 
     <input type="text" th:field="*{fullName}" placeholder="FullName" class="form-control mb-4 col-4">
+    <p th:errors="*{fullName}" class="text-danger" th:if="${#fields.hasErrors('fullName')}"></p>
 
-    <!-- Dropdown list for role -->
     <select th:field="*{role}" class="form-control mb-4 col-4">
       <option value="ADMIN">Admin</option>
       <option value="USER">User</option>
     </select>
+    <p th:errors="*{role}" class="text-danger" th:if="${#fields.hasErrors('role')}"></p>
+
 
     <input type="text" th:field="*{password}" placeholder="Password" class="form-control mb-4 col-4">
+    <p th:errors="*{password}" class="text-danger" th:if="${#fields.hasErrors('password')}"></p>
+
 
     <button type="submit" class="btn btn-info col-2"> Save User</button>
   </form>

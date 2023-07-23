@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RuleNameForm {
 
-    @NotBlank(message = "id is required")
-    private String id;
-
     @NotBlank(message = "description is required")
     private String description;
 

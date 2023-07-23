@@ -3,7 +3,7 @@ package com.openclassrooms.poseidon.controllers;
 import com.openclassrooms.poseidon.domain.RuleName;
 import com.openclassrooms.poseidon.forms.RuleNameForm;
 import com.openclassrooms.poseidon.services.RuleNameService;
-import org.h2.engine.Mode;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,9 +35,9 @@ public class RuleNameController {
     }
 
     @PostMapping("/saveRuleName")
-    public String saveRating(@ModelAttribute("ruleNameForm") RuleNameForm ruleNameForm,
+    public String saveRating(@Valid @ModelAttribute("ruleNameForm") RuleNameForm ruleNameForm,
                              BindingResult result, Model model) {
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             return "newRuleName";
         }
         RuleName ruleName = new RuleName();
