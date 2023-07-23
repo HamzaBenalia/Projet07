@@ -11,7 +11,10 @@
 
 <body>
 
-<div class="container my-3">
+<div class="container">
+
+  <div th:insert="fragments/header :: header"></div>
+
   <h1>RuleName List</h1>
 
   <a th:href="@{/showNewRuleNameForm}" class="btn btn-primary btn-sm mb-3"> Add A RuleNameList </a>
@@ -19,14 +22,14 @@
   <table border="2" class="table table-striped table-responsive-md">
     <thead>
     <tr>
-      <th>RuleName id</th>
-      <th>RuleName description</th>
-      <th>RuleName json</th>
-      <th>RuleName name</th>
-      <th>RuleName sqlPart</th>
-      <th>RuleName sqlStr</th>
-      <th>RuleName template</th>
-      <th> Actions </th>
+      <th>Id</th>
+      <th>Description</th>
+      <th>Json</th>
+      <th>Name</th>
+      <th>SqlPart</th>
+      <th>SqlStr</th>
+      <th>Template</th>
+      <th>Actions</th>
     </tr>
     </thead>
 

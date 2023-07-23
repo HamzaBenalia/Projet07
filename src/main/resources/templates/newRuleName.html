@@ -13,9 +13,7 @@
   <hr>
   <h2>Save RuleName</h2>
 
-  <form action="#" th:action="@{/saveRuleName}" th:object="${ruleName}" method="POST">
-
-    <input type="text" th:field="*{id}" class="form-control mb-4 col-4">
+  <form action="#" th:action="@{/saveRuleName}" th:object="${ruleNameForm}" method="POST">
 
     <input type="text" th:field="*{description}" placeholder="description" class="form-control mb-4 col-4">
 

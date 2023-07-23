@@ -15,9 +15,6 @@
 
   <form action="#" th:action="@{/saveRating}" th:object="${ratingForm}" method="POST">
 
-    <input type="number" th:field="*{id}" placeholder="id" class="form-control mb-4 col-4" required="true">
-    <p th:errors="*{id}" class="text-danger" th:if="${#fields.hasErrors('id')}"></p>
-
     <input type="text" th:field="*{moodysRating}" placeholder="moodysRating" class="form-control mb-4 col-4">
     <p th:errors="*{moodysRating}" class="text-danger" th:if="${#fields.hasErrors('moodysRating')}"></p>
 

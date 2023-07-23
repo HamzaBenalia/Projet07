@@ -45,7 +45,6 @@ public class RatingController {
         rating.setFitchRating(ratingForm.getFitchRating());
         rating.setMoodysRating(ratingForm.getMoodysRating());
         rating.setSandPRating(ratingForm.getSandPRating());
-        rating.setId(Long.valueOf(ratingForm.getId()));
         rating.setOrderNumber(Long.valueOf(ratingForm.getOrderNumber()));
         ratingService.saveRating(rating);
         return "redirect:/ratingHomePage";

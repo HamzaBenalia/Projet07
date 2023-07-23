@@ -15,48 +15,11 @@
 
   <form action="#" th:action="@{/saveTrade}" th:object="${trade}" method="POST">
 
-    <input type="text" th:field="*{tradeId}" class="form-control mb-4 col-4">
-
     <input type="text" th:field="*{account}" placeholder="account" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{benchmark}" placeholder="benchmark" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{book}" placeholder="book" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{buyPrice}" placeholder="buyPrice" class="form-control mb-4 col-4">
 
     <input type="text" th:field="*{buyQuantity}" placeholder="buyQuantity" class="form-control mb-4 col-4">
 
-    <input type="text" th:field="*{creationDate}" placeholder="creationDate" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{creationName}" placeholder="creationName" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{dealName}" placeholder="dealName" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{dealType}" placeholder="dealType" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{revisionDate}" placeholder="revisionDate" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{revisionName}" placeholder="revisionName" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{security}" placeholder="security" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{sellPrice}" placeholder="sellPrice" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{sellQuantity}" placeholder="sellQuantity" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{side}" placeholder="side" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{sourceListId}" placeholder="sourceListId" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{status}" placeholder="status" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{tradeDate}" placeholder="tradeDate" class="form-control mb-4 col-4">
-
-    <input type="text" th:field="*{trader}" placeholder="trader" class="form-control mb-4 col-4">
-
     <input type="text" th:field="*{type}" placeholder="type" class="form-control mb-4 col-4">
-
 
     <button type="submit" class="btn btn-info col-2"> Save Trade </button>
   </form>

@@ -11,7 +11,10 @@
 
 <body>
 
-<div class="container my-3">
+<div class="container">
+
+  <div th:insert="fragments/header :: header"></div>
+
   <h1>Trade List</h1>
 
   <a th:href="@{/showNewTradeForm}" class="btn btn-primary btn-sm mb-3"> Add A Trade List </a>

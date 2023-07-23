@@ -41,7 +41,6 @@ public class RuleNameController {
             return "newRuleName";
         }
         RuleName ruleName = new RuleName();
-        ruleName.setId(Long.valueOf(ruleNameForm.getId()));
         ruleName.setName(ruleNameForm.getName());
         ruleName.setJson(ruleNameForm.getJson());
         ruleName.setDescription(ruleNameForm.getDescription());
