@@ -6,7 +6,6 @@ import com.openclassrooms.poseidon.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -67,7 +66,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/deleteEmployee/{id}")
+    @GetMapping("/deleteUser/{id}")
     public String deleteEmployee(@PathVariable(value = "id") long id) {
 
         // call delete employee method

@@ -3,8 +3,11 @@ package com.openclassrooms.poseidon.controllers;
 import com.openclassrooms.poseidon.domain.BidList;
 import com.openclassrooms.poseidon.forms.BidListForm;
 import com.openclassrooms.poseidon.services.BidListService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Controller
 public class BidListController {
@@ -27,6 +32,12 @@ public class BidListController {
 
     @GetMapping("/")
     public String viewHomePage(Model model) {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpSession httpSession = attr.getRequest().getSession();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean hasAdminRole = authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+        httpSession.setAttribute("hasAdminRole", hasAdminRole);
         model.addAttribute("bidListList", bidListService.listAll());
         return "index";
     }
@@ -46,29 +57,36 @@ public class BidListController {
         if (result.hasErrors()) {
             return "newBidList";
         }
+        try {
 
-        BidList bidList = new BidList();
-        bidList.setBidListId(Long.valueOf(bidListForm.getBidListId()));
-        bidList.setAccount(bidListForm.getAccount());
-        bidList.setType(bidListForm.getType());
-        bidList.setBidQuantity(Double.valueOf(bidListForm.getBidQuantity()));
+            BidList bidList = new BidList();
+            bidList.setBidListId(Long.valueOf(bidListForm.getBidListId()));
+            bidList.setAccount(bidListForm.getAccount());
+            bidList.setType(bidListForm.getType());
+            bidList.setBidQuantity(Double.valueOf(bidListForm.getBidQuantity()));
 
-        bidListService.saveBidList(bidList);
-        return "redirect:/bidListHomePage";
+            bidListService.saveBidList(bidList);
+            return "redirect:/bidListHomePage";
+        } catch (Exception exception) {
+            result.rejectValue("bidQuantity", "", "error : " + exception.getMessage());
+            return "newBidList";
+        }
     }
 
     @GetMapping("/showFormForBidListUpdate/{id}")
     public String showFormForBidListUpdate(@PathVariable(value = "id") Long id, Model model) {
 
         BidList bidList = bidListService.getBidList(id);
-        model.addAttribute("bidListForm", bidList);
-        return "updateBidList";
+        if (bidList != null) {
+            model.addAttribute("bidListForm", bidList);
+            return "updateBidList";
+        } else {
+            return "redirect:/bidListHomePage"; // faire les try and catch sur les saves and updates
+        }
     }
 
     @GetMapping("/deleteBidList/{id}")
-    public String deleteCurvePoint(@PathVariable(value = "id") Long id) {
-
-        // call delete employee method
+    public String deleteBidList(@PathVariable(value = "id") Long id) {
         this.bidListService.deleteBidList(id);
         return "redirect:/bidListHomePage";
     }

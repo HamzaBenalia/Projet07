@@ -12,6 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Classe de configuration de spring security.
+ */
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration {
@@ -27,37 +30,29 @@ public class SpringSecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-
+    /**
+     * configuration du service du recherche des utilisateurs et du hashage des mots de passes.
+     *
+     * @param auth {@link AuthenticationManagerBuilder}
+     * @throws Exception
+     */
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // Defining the passwordEncoder here, to avoid plain-text manipulations
         auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
-//
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.jdbcAuthentication()
-//                .dataSource(dataSource)
-//                .usersByUsernameQuery("SELECT username, password, 1 FROM Users WHERE username = ?")
-//                .authoritiesByUsernameQuery("SELECT username, role FROM Users WHERE username = ?")
-//                .passwordEncoder(passwordEncoder());
-//    }
-
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        http.authorizeHttpRequests().anyRequest().permitAll();
-//
-//
-//        return http.build(); // créer un filtre de sécurité...
-//
-//    }
-
+    /**
+     * configuration des accès aux routes sécurisées et autorisées.
+     *
+     * @param http {@link HttpSecurity}
+     * @return
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/login", "/index","/app-logout").permitAll()
+                        .requestMatchers("/login", "/index", "/app-logout").permitAll()
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/user/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
@@ -66,8 +61,7 @@ public class SpringSecurityConfiguration {
                         .loginPage("/login")
                         .permitAll()
                         .defaultSuccessUrl("/")
-                )
-                .logout((logout) -> logout.logoutUrl("/app-logout").permitAll().invalidateHttpSession(true).logoutSuccessUrl("/login"));
+                );
         return http.build();
     }
 }

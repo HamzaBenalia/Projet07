@@ -27,7 +27,7 @@ public class RuleNameController {
     }
 
     @GetMapping("/showNewRuleNameForm")
-    public String showNewRatingForm(Model model) {
+    public String showNewRuleNameForm(Model model) {
         // create model attribute to bind form data
         RuleNameForm ruleNameForm = new RuleNameForm();
         model.addAttribute("ruleNameForm", ruleNameForm);
@@ -35,8 +35,8 @@ public class RuleNameController {
     }
 
     @PostMapping("/saveRuleName")
-    public String saveRating(@Valid @ModelAttribute("ruleNameForm") RuleNameForm ruleNameForm,
-                             BindingResult result, Model model) {
+    public String saveRuleName(@Valid @ModelAttribute("ruleNameForm") RuleNameForm ruleNameForm,
+                               BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "newRuleName";
         }
@@ -52,15 +52,18 @@ public class RuleNameController {
     }
 
     @GetMapping("/showFormForRuleNameUpdate/{id}")
-    public String showFormForRatingListUpdate(@PathVariable(value = "id") long id, Model model) {
-
+    public String showFormForRuleNameUpdate(@PathVariable(value = "id") long id, Model model) {
         RuleName ruleName = ruleNameService.getRuleName(id);
-        model.addAttribute("ruleName", ruleName);
-        return "updateRuleName";
+        if (ruleName != null) {
+            model.addAttribute("ruleName", ruleName);
+            return "updateRuleName";
+        } else {
+            return "redirect:/ruleNameHomePage";
+        }
     }
 
     @GetMapping("/deleteRuleName/{id}")
-    public String deleteRating(@PathVariable(value = "id") long id) {
+    public String deleteRuleName(@PathVariable(value = "id") long id) {
 
         // call delete employee method
         this.ruleNameService.deleteRuleName(id);

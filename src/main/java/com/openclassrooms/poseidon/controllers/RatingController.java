@@ -38,7 +38,7 @@ public class RatingController {
     public String saveRating(@Valid @ModelAttribute("ratingForm") RatingForm ratingForm,
                              BindingResult result, Model model) {
 
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             return "newRating";
         }
         Rating rating = new Rating();

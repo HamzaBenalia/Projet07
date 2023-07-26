@@ -11,7 +11,8 @@
 
 <body>
 
-<div class="container my-2">
+<div class="container">
+  <div th:insert="fragments/header :: header"></div>
   <h1>Users List</h1>
 
   <a th:href="@{/user/showNewUserForm}" class="btn btn-primary btn-sm mb-3"> Add User </a>

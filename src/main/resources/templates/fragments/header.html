@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
 
 <head>
   <meta charset="utf-8"/>
@@ -19,9 +19,14 @@
       <a href="/tradeHomePage">Trade</a>&nbsp;|&nbsp;
       <a href="/ruleNameHomePage">Rule</a>
     </div>
-      <br><span sec:authorize="hasRole('ADMIN')"><a href="/user">Users</a> |</span> <a href="/app-logout">Logout</a>
-<!--    sec:authorize="hasRole('ADMIN')"-->
-    </div>
+<!--    <small th:text="${session.firstName} + ' ' + ${session.lastName} + ' (balance : ' + ${session.balance} + ' €)'" class="fw-normal"></small></span>-->
+<!--    <div th:if="${session.hasAdminRole}">-->
+    <span th:if="${session.hasAdminRole}">
+    <a href="/user">Users</a> |
+</span>
+    <a href="/app-logout">Logout</a>
   </div>
 </div>
+
 </body>
+</html>

@@ -52,11 +52,14 @@ public class TradeController {
 
 
     @GetMapping("/showFormForTradeUpdate/{tradeId}")
-    public String showFormForTradeUpdate(@PathVariable(value = "tradeId") Long tradeId, Model model) {
-
-        Trade trade = tradeService.getTrade(tradeId);
-        model.addAttribute("trade", trade);
-        return "updateTrade";
+    public String showFormForTradeUpdate(Long id, Model model) {
+        Trade trade = tradeService.getTrade(id);
+        if (trade != null) {
+            model.addAttribute("trade", trade);
+            return "tradeForm";
+        } else {
+            return "redirect:/tradeHomePage";
+        }
     }
 
     @GetMapping("/deleteTrade/{tradeId}")

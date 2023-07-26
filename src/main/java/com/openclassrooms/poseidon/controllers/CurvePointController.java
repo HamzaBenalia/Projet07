@@ -39,9 +39,9 @@ public class CurvePointController {
     }
 
     @PostMapping("/saveCurvePoint")
-    public String saveCurvePoint(@Valid @ModelAttribute("curvePointForm")CurvePointFrom curvePointForm,
+    public String saveCurvePoint(@Valid @ModelAttribute("curvePointForm") CurvePointFrom curvePointForm,
                                  BindingResult result,
-                                 Model model){
+                                 Model model) {
         if (result.hasErrors()) {
             return "newCurvePoint";
         }
@@ -61,8 +61,12 @@ public class CurvePointController {
     public String showFormForCurvePointListUpdate(@PathVariable(value = "id") long id, Model model) {
 
         CurvePoint curvePoint = curvePointService.getCurvePoint(id);
-        model.addAttribute("curvePoint", curvePoint);
-        return "updateCurvePoint";
+        if (curvePoint != null) {
+            model.addAttribute("curvePoint", curvePoint);
+            return "updateCurvePoint";
+        } else {
+            return "redirect:/curvePointHomePage";
+        }
     }
 
     @GetMapping("/deleteCurvePoint/{id}")
