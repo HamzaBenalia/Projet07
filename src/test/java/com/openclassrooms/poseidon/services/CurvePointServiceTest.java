@@ -84,7 +84,7 @@ public class CurvePointServiceTest {
         when(curvePointRepository.findById(id)).thenReturn(expectedOptional);
 
         // Act
-        CurvePoint actualCurvePoint = curvePointServiceImpl.getCurvePoint(id);
+        CurvePoint actualCurvePoint = curvePointServiceImpl.updateCurvePoint(id);
 
         // Assert
         verify(curvePointRepository).findById(id);

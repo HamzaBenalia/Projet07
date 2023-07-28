@@ -44,12 +44,8 @@ public class UserServiceTest {
     }
 
 
-//    public List<Users> listAll() {
-//        return userRepository.findAll();
-//    }
-
     @Test
-    public void testListAll() {
+    public void testListAllUsers() {
         // Arrange
         List<Users> expectedUsers = new ArrayList<>();
         expectedUsers.add(new Users(1234567890123456789L, "Hamza", "1234", "ADMIN", "ADMIN"));
@@ -84,7 +80,7 @@ public class UserServiceTest {
 
 
     @Test
-    public void testGet() {
+    public void testUpdateUser () {
         // Arrange
         Long id = 1234567890123456789L;
         Users expectedUser = new Users(id, "Hamza", "1234", "ADMIN", "ADMIN");
@@ -93,7 +89,7 @@ public class UserServiceTest {
         when(userRepository.findById(id)).thenReturn(expectedOptional);
 
         // Act
-        Users actualUser = userServiceImpl.get(id);
+        Users actualUser = userServiceImpl.updateUser(id);
 
         // Assert
         verify(userRepository).findById(id);
@@ -101,7 +97,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testDelete() {
+    public void testDeleteUser() {
         // Arrange
         Long id = 1234567890123456789L;
 

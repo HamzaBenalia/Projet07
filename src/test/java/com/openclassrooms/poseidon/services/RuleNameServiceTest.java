@@ -73,7 +73,7 @@ public class RuleNameServiceTest {
         when(ruleNameRepository.findById(id)).thenReturn(expectedOptional);
 
         // Act
-        RuleName actualRuleName = ruleNameServiceImpl.getRuleName(id);
+        RuleName actualRuleName = ruleNameServiceImpl.updateRuleName(id);
 
         // Assert
         verify(ruleNameRepository).findById(id);

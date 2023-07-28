@@ -1,4 +1,5 @@
 package com.openclassrooms.poseidon.controllers;
+
 import com.openclassrooms.poseidon.domain.BidList;
 import com.openclassrooms.poseidon.forms.BidListForm;
 import com.openclassrooms.poseidon.services.BidListService;
@@ -7,10 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -40,14 +46,22 @@ public class BidListControllerTest {
         assertEquals("redirect:/", view);
     }
 
-//    @Test
-//    public void testViewHomePage() {
-//        when(bidListService.listAll()).thenReturn(new ArrayList<>());
-//        String view = controller.viewHomePage(model);
-//        verify(bidListService, times(1)).listAll();
-//        verify(model, times(1)).addAttribute("bidListList", bidListService.listAll());
-//        assertEquals("index", view);
-//    }
+    @Test
+    public void testViewHomePage() {
+        // Setup request and session
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        ServletRequestAttributes attributes = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(attributes);
+        HttpSession session = request.getSession();
+
+        Authentication auth = mock(Authentication.class);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String view = controller.viewHomePage(model);
+
+        // Verify operations
+        verify(model).addAttribute(eq("bidListList"), any(List.class));
+        assertEquals("index", view);
+    }
 
     @Test
     public void testShowNewBidListForm() {
@@ -77,27 +91,41 @@ public class BidListControllerTest {
     }
 
     @Test
+    public void testSaveBidListWithException() {
+        BidListForm bidListForm = new BidListForm();
+        // set form fields here
+
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new RuntimeException("Test exception")).when(bidListService).saveBidList(any(BidList.class));
+
+        String view = controller.saveBidList(bidListForm, result, model);
+
+        assertEquals("newBidList", view);
+        verify(result).rejectValue(eq("bidQuantity"), eq(""), anyString());
+    }
+
+    @Test
     public void testShowFormForBidListUpdate() {
         BidList bidList = new BidList();
-        when(bidListService.getBidList(any(Long.class))).thenReturn(bidList);
+        when(bidListService.updateBidList(any(Long.class))).thenReturn(bidList);
         String view = controller.showFormForBidListUpdate(1L, model);
-        verify(bidListService, times(1)).getBidList(1L);
+        verify(bidListService, times(1)).updateBidList(1L);
         verify(model, times(1)).addAttribute("bidListForm", bidList);
         assertEquals("updateBidList", view);
     }
 
     @Test
     public void testShowFormForBidListUpdate_NotFound() {
-        when(bidListService.getBidList(any(Long.class))).thenReturn(null);
+        when(bidListService.updateBidList(any(Long.class))).thenReturn(null);
         String view = controller.showFormForBidListUpdate(1L, model);
-        verify(bidListService, times(1)).getBidList(1L);
+        verify(bidListService, times(1)).updateBidList(1L);
         verify(model, times(0)).addAttribute(any(String.class), any());
         assertEquals("redirect:/bidListHomePage", view);
     }
 
     @Test
     public void testDeleteBidList() {
-        String view = controller.deleteCurvePoint(1L);
+        String view = controller.deleteBidList(1L);
         verify(bidListService, times(1)).deleteBidList(1L);
         assertEquals("redirect:/bidListHomePage", view);
     }

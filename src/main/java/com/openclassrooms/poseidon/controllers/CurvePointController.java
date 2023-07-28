@@ -45,29 +45,41 @@ public class CurvePointController {
         if (result.hasErrors()) {
             return "newCurvePoint";
         }
-        CurvePoint curvePoint = new CurvePoint();
-        curvePoint.setCurveId(Long.valueOf(curvePointForm.getCurveId()));
-        curvePoint.setValue(Double.valueOf(curvePointForm.getValue()));
-        curvePoint.setTerm(Double.valueOf(curvePointForm.getTerm()));
-        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-        curvePoint.setAsOfDate(now);
-        curvePoint.setCreationDate(now);
-        curvePointService.saveCurvePoint(curvePoint);
-        return "redirect:/curvePointHomePage";
-    }
 
+        try {
+            CurvePoint curvePoint = new CurvePoint();
+            curvePoint.setCurveId(Long.valueOf(curvePointForm.getCurveId()));
+            curvePoint.setValue(Double.valueOf(curvePointForm.getValue()));
+            curvePoint.setTerm(Double.valueOf(curvePointForm.getTerm()));
+            Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+            curvePoint.setAsOfDate(now);
+            curvePoint.setCreationDate(now);
+
+            curvePointService.saveCurvePoint(curvePoint);
+
+            return "redirect:/curvePointHomePage";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "newCurvePoint";
+        }
+    }
 
     @GetMapping("/showFormForCurvePointUpdate/{id}")
     public String showFormForCurvePointListUpdate(@PathVariable(value = "id") long id, Model model) {
-
-        CurvePoint curvePoint = curvePointService.getCurvePoint(id);
-        if (curvePoint != null) {
-            model.addAttribute("curvePoint", curvePoint);
-            return "updateCurvePoint";
-        } else {
+        try {
+            CurvePoint curvePoint = curvePointService.updateCurvePoint(id);
+            if (curvePoint != null) {
+                model.addAttribute("curvePoint", curvePoint);
+                return "updateCurvePoint";
+            } else {
+                return "redirect:/curvePointHomePage";
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
             return "redirect:/curvePointHomePage";
         }
     }
+
 
     @GetMapping("/deleteCurvePoint/{id}")
     public String deleteCurvePoint(@PathVariable(value = "id") long id) {

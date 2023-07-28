@@ -26,7 +26,7 @@ public class RuleNameServiceImpl implements RuleNameService {
     }
 
     @Override
-    public RuleName getRuleName(Long id) {
+    public RuleName updateRuleName(Long id) {
         return ruleNameRepository.findById(id).get();
     }
 

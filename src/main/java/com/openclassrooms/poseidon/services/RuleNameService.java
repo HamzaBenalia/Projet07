@@ -12,7 +12,7 @@ public interface RuleNameService {
     List<RuleName> listAll();
 
 
-    RuleName getRuleName(Long id);
+    RuleName updateRuleName(Long id);
 
 
     void deleteRuleName(Long id);

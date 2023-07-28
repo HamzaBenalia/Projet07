@@ -8,9 +8,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -65,13 +63,27 @@ public class RuleNameControllerTest {
     }
 
     @Test
+    public void testSaveRuleNameWithException() {
+        RuleNameForm ruleNameForm = new RuleNameForm();
+        // set form fields here
+
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new RuntimeException("Test exception")).when(ruleNameService).saveRuleName(any(RuleName.class));
+
+        String view = controller.saveRuleName(ruleNameForm, result, model);
+
+        assertEquals("newRuleName", view);
+        verify(model).addAttribute(eq("errorMessage"), anyString());
+    }
+
+    @Test
     public void testShowFormForRuleNameUpdate_RuleNameFound() {
         RuleName ruleName = new RuleName();
-        when(ruleNameService.getRuleName(any(Long.class))).thenReturn(ruleName);
+        when(ruleNameService.updateRuleName(any(Long.class))).thenReturn(ruleName);
 
         String view = controller.showFormForRuleNameUpdate(1L, model);
 
-        verify(ruleNameService, times(1)).getRuleName(1L);
+        verify(ruleNameService, times(1)).updateRuleName(1L);
         verify(model, times(1)).addAttribute("ruleName", ruleName);
 
         assertEquals("updateRuleName", view);
@@ -79,11 +91,11 @@ public class RuleNameControllerTest {
 
     @Test
     public void testShowFormForRuleNameUpdate_RuleNameNotFound() {
-        when(ruleNameService.getRuleName(any(Long.class))).thenReturn(null);
+        when(ruleNameService.updateRuleName(any(Long.class))).thenReturn(null);
 
         String view = controller.showFormForRuleNameUpdate(1L, model);
 
-        verify(ruleNameService, times(1)).getRuleName(1L);
+        verify(ruleNameService, times(1)).updateRuleName(1L);
         verify(model, times(0)).addAttribute(any(String.class), any());
 
         assertEquals("redirect:/ruleNameHomePage", view);

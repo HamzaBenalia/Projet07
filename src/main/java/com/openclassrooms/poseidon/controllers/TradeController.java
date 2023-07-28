@@ -38,29 +38,42 @@ public class TradeController {
     @PostMapping("/saveTrade")
     public String saveTrade(@Valid @ModelAttribute("tradeForm") TradeForm tradeForm,
                             BindingResult result, Model model) {
-
         if (result.hasErrors()) {
             return "newTrade";
         }
-        Trade trade = new Trade();
-        trade.setAccount(tradeForm.getAccount());
-        trade.setBuyQuantity(Double.valueOf(tradeForm.getBuyQuantity()));
-        trade.setType(tradeForm.getType());
-        tradeService.saveTrade(trade);
-        return "redirect:/tradeHomePage";
+
+        try {
+            Trade trade = new Trade();
+            trade.setAccount(tradeForm.getAccount());
+            trade.setBuyQuantity(Double.valueOf(tradeForm.getBuyQuantity()));
+            trade.setType(tradeForm.getType());
+
+            tradeService.saveTrade(trade);
+
+            return "redirect:/tradeHomePage";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "newTrade";
+        }
     }
 
 
     @GetMapping("/showFormForTradeUpdate/{tradeId}")
-    public String showFormForTradeUpdate(Long id, Model model) {
-        Trade trade = tradeService.getTrade(id);
-        if (trade != null) {
-            model.addAttribute("trade", trade);
-            return "tradeForm";
-        } else {
+    public String showFormForTradeUpdate(@PathVariable(value = "tradeId") Long id, Model model) {
+        try {
+            Trade trade = tradeService.updateTrade(id);
+            if (trade != null) {
+                model.addAttribute("trade", trade);
+                return "updateTrade";
+            } else {
+                return "redirect:/tradeHomePage";
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
             return "redirect:/tradeHomePage";
         }
     }
+
 
     @GetMapping("/deleteTrade/{tradeId}")
     public String deleteTrade(@PathVariable(value = "tradeId") Long tradeId) {

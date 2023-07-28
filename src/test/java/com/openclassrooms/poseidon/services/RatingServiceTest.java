@@ -73,7 +73,7 @@ public class RatingServiceTest {
         when(ratingRepository.findById(id)).thenReturn(expectedOptional);
 
         // Act
-        Rating actualRating = ratingServiceImpl.get(id);
+        Rating actualRating = ratingServiceImpl.updateRating(id);
 
         // Assert
         verify(ratingRepository).findById(id);

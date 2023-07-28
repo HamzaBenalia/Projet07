@@ -26,7 +26,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
-    public Trade getTrade(Long id) {
+    public Trade updateTrade(Long id) {
         return tradeRepository.findById(id).get();
     }
 

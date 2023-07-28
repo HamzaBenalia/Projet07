@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public Users get(Long id) {
+    public Users updateUser(Long id) {
         return userRepository.findById(id).get();
     }
 

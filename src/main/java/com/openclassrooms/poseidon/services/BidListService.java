@@ -12,7 +12,7 @@ public interface BidListService {
 
     List<BidList> listAll();
 
-    BidList getBidList(Long id);
+    BidList updateBidList(Long id);
 
 
     void deleteBidList(Long id);

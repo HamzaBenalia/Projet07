@@ -21,11 +21,15 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 //                new AlphabeticalSequenceRule(3, false),
 //                new QwertySequenceRule(3, false),
 //                new WhitespaceRule()));
+        System.out.println("Validating password: " + password);
+
         RuleResult result = validator.validate(new PasswordData(password));
         if (result.isValid()) {
             return true;
         }
         context.disableDefaultConstraintViolation();
+        String errors = String.join(",", validator.getMessages(result));
+        System.out.println("Password validation errors: " + errors);
         context.buildConstraintViolationWithTemplate(String.join(",", validator.getMessages(result))).addConstraintViolation();
         return false;
     }

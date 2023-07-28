@@ -30,7 +30,7 @@ public class RatingServiceImpl implements RatingService {
 //    }
 
     @Override
-    public Rating get(Long id) {
+    public Rating updateRating(Long id) {
         return ratingRepository.findById(id).get();
     }
 

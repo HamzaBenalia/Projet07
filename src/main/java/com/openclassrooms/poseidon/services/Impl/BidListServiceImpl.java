@@ -26,7 +26,7 @@ public class BidListServiceImpl implements BidListService {
     }
 
     @Override
-    public BidList getBidList(Long id) {
+    public BidList updateBidList(Long id) {
         return bidListRepository.findById(id).get();
     }
 

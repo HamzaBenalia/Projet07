@@ -12,7 +12,7 @@ public interface TradeService {
     List<Trade> listAll();
 
 
-    Trade getTrade(Long id);
+    Trade updateTrade(Long id);
 
 
     void deleteTrade(Long id);

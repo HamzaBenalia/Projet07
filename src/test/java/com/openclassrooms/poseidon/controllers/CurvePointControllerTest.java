@@ -68,20 +68,34 @@ public class CurvePointControllerTest {
     }
 
     @Test
+    public void testSaveCurvePointWithException() {
+        CurvePointFrom curvePointForm = new CurvePointFrom();
+        // set form fields here
+
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new RuntimeException("Test exception")).when(curvePointService).saveCurvePoint(any(CurvePoint.class));
+
+        String view = controller.saveCurvePoint(curvePointForm, result, model);
+
+        assertEquals("newCurvePoint", view);
+        verify(model).addAttribute(eq("errorMessage"), anyString());
+    }
+
+    @Test
     public void testShowFormForCurvePointUpdate() {
         CurvePoint curvePoint = new CurvePoint();
-        when(curvePointService.getCurvePoint(any(Long.class))).thenReturn(curvePoint);
+        when(curvePointService.updateCurvePoint(any(Long.class))).thenReturn(curvePoint);
         String view = controller.showFormForCurvePointListUpdate(1L, model);
-        verify(curvePointService, times(1)).getCurvePoint(1L);
+        verify(curvePointService, times(1)).updateCurvePoint(1L);
         verify(model, times(1)).addAttribute("curvePoint", curvePoint);
         assertEquals("updateCurvePoint", view);
     }
 
     @Test
     public void testShowFormForCurvePointUpdate_NotFound() {
-        when(curvePointService.getCurvePoint(any(Long.class))).thenReturn(null);
+        when(curvePointService.updateCurvePoint(any(Long.class))).thenReturn(null);
         String view = controller.showFormForCurvePointListUpdate(1L, model);
-        verify(curvePointService, times(1)).getCurvePoint(1L);
+        verify(curvePointService, times(1)).updateCurvePoint(1L);
         verify(model, times(0)).addAttribute(any(String.class), any());
         assertEquals("redirect:/curvePointHomePage", view);
     }

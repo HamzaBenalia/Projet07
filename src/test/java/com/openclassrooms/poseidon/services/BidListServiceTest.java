@@ -98,7 +98,7 @@ public class BidListServiceTest {
         when(bidListRepository.findById(id)).thenReturn(expectedOptional);
 
         // Act
-        BidList actualBidList = bidListServiceImpl.getBidList(id);
+        BidList actualBidList = bidListServiceImpl.updateBidList(id);
 
         // Assert
         verify(bidListRepository).findById(id);

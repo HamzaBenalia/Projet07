@@ -26,7 +26,7 @@ public class CurvePointServiceImpl implements CurvePointService {
     }
 
     @Override
-    public CurvePoint getCurvePoint(Long id) {
+    public CurvePoint updateCurvePoint(Long id) {
         return curvePointRepository.findById(id).get();
     }
 

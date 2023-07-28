@@ -44,26 +44,38 @@ public class UserController {
             return "newUser";
         }
 
-        Users users = new Users();
-        users.setFullName(userForm.getFullName());
-        users.setRole(userForm.getRole());
-        users.setPassword(userForm.getPassword());
-        users.setUsername(userForm.getUsername());
-        userService.saveUser(users);
-        return "redirect:/";
+        try {
+            Users users = new Users();
+            users.setFullName(userForm.getFullName());
+            users.setRole(userForm.getRole());
+            users.setPassword(userForm.getPassword());
+            users.setUsername(userForm.getUsername());
+
+            userService.saveUser(users);
+
+            return "redirect:/";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "newUser";
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/showFormForUpdate/{id}")
     public String showFormForUpdate(@PathVariable(value = "id") long id, Model model) {
+        try {
+            // get employee from the service
+            Users user = userService.updateUser(id);
 
-        // get employee from the service
-        Users user = userService.get(id);
-
-        // set employee as a model attribute to pre-populate the form
-        model.addAttribute("user", user);
-        return "updateUser";
+            // set employee as a model attribute to pre-populate the form
+            model.addAttribute("user", user);
+            return "updateUser";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "redirect:/"; // Or wherever you want to redirect in case of an error
+        }
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/deleteUser/{id}")

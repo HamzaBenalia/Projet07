@@ -75,20 +75,36 @@ public class TradeControllerTest {
     }
 
     @Test
+    public void testSaveTradeWithException() {
+        TradeForm tradeForm = new TradeForm();
+        tradeForm.setAccount("TestAccount");
+        tradeForm.setBuyQuantity("100");
+        tradeForm.setType("TestType");
+
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new RuntimeException("Test exception")).when(tradeService).saveTrade(any(Trade.class));
+
+        String view = controller.saveTrade(tradeForm, result, model);
+
+        assertEquals("newTrade", view);
+        verify(model).addAttribute(eq("errorMessage"), anyString());
+    }
+
+    @Test
     public void testShowFormForTradeUpdate() {
         Trade trade = new Trade();
-        when(tradeService.getTrade(any(Long.class))).thenReturn(trade);
+        when(tradeService.updateTrade(any(Long.class))).thenReturn(trade);
         String view = controller.showFormForTradeUpdate(1L, model);
-        verify(tradeService, times(1)).getTrade(1L);
+        verify(tradeService, times(1)).updateTrade(1L);
         verify(model, times(1)).addAttribute("trade", trade);
-        assertEquals("tradeForm", view);
+        assertEquals("updateTrade", view);
     }
 
     @Test
     public void testShowFormForTradeUpdate_NotFound() {
-        when(tradeService.getTrade(any(Long.class))).thenReturn(null);
+        when(tradeService.updateTrade(any(Long.class))).thenReturn(null);
         String view = controller.showFormForTradeUpdate(1L, model);
-        verify(tradeService, times(1)).getTrade(1L);
+        verify(tradeService, times(1)).updateTrade(1L);
         verify(model, times(0)).addAttribute(any(String.class), any());
         assertEquals("redirect:/tradeHomePage", view);
     }
@@ -101,11 +117,11 @@ public class TradeControllerTest {
     }
     @Test
     public void testShowFormForTradeUpdateNotFound() {
-        when(tradeService.getTrade(any(Long.class))).thenReturn(null);
+        when(tradeService.updateTrade(any(Long.class))).thenReturn(null);
 
         String view = controller.showFormForTradeUpdate(1L, model);
 
-        verify(tradeService, times(1)).getTrade(1L);
+        verify(tradeService, times(1)).updateTrade(1L);
         verify(model, times(0)).addAttribute(any(String.class), any());
 
         assertEquals("redirect:/tradeHomePage", view);

@@ -86,7 +86,7 @@ public class TradeServiceTest {
         when(tradeRepository.findById(id)).thenReturn(expectedOptional);
 
         // Act
-        Trade actualTrade = tradeServiceImpl.getTrade(id);
+        Trade actualTrade = tradeServiceImpl.updateTrade(id);
 
         // Assert
         verify(tradeRepository).findById(id);

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BidListForm {
     @NotBlank(message = "id is mandatory")
-    @Pattern(message = "id must be a number", regexp = "^[1-9]*$")
+    @Pattern(message = "id must be a number", regexp = "^[0-9]*$")
     private String bidListId;
     @NotBlank(message = "account is mandatory")
     private String account;

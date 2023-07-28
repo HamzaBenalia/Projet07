@@ -12,7 +12,7 @@ public interface CurvePointService {
     List<CurvePoint> listAll();
 
 
-    CurvePoint getCurvePoint(Long id);
+    CurvePoint updateCurvePoint(Long id);
 
     void deleteCurvePoint(Long id);
 }

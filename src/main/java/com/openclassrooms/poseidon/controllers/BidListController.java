@@ -73,17 +73,24 @@ public class BidListController {
         }
     }
 
+
     @GetMapping("/showFormForBidListUpdate/{id}")
     public String showFormForBidListUpdate(@PathVariable(value = "id") Long id, Model model) {
 
-        BidList bidList = bidListService.getBidList(id);
-        if (bidList != null) {
-            model.addAttribute("bidListForm", bidList);
-            return "updateBidList";
-        } else {
-            return "redirect:/bidListHomePage"; // faire les try and catch sur les saves and updates
+        try {
+            BidList bidList = bidListService.updateBidList(id);
+            if (bidList != null) {
+                model.addAttribute("bidListForm", bidList);
+                return "updateBidList";
+            } else {
+                return "redirect:/bidListHomePage";
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "redirect:/bidListHomePage";
         }
     }
+
 
     @GetMapping("/deleteBidList/{id}")
     public String deleteBidList(@PathVariable(value = "id") Long id) {

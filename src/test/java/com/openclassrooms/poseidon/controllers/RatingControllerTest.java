@@ -59,11 +59,26 @@ public class RatingControllerTest {
     }
 
     @Test
+    public void testSaveRatingWithException() {
+        RatingForm ratingForm = new RatingForm();
+        // set form fields here
+
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new RuntimeException("Test exception")).when(ratingService).saveRating(any(Rating.class));
+
+        String view = controller.saveRating(ratingForm, result, model);
+
+        assertEquals("newRating", view);
+        verify(model).addAttribute(eq("errorMessage"), anyString());
+    }
+
+
+    @Test
     public void testShowFormForRatingListUpdate() {
         Rating rating = new Rating();
-        when(ratingService.get(any(Long.class))).thenReturn(rating);
+        when(ratingService.updateRating(any(Long.class))).thenReturn(rating);
         String view = controller.showFormForRatingListUpdate(1L, model);
-        verify(ratingService, times(1)).get(1L);
+        verify(ratingService, times(1)).updateRating(1L);
         verify(model, times(1)).addAttribute("rating", rating);
         assertEquals("updateRating", view);
     }

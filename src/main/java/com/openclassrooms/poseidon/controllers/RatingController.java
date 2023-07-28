@@ -41,22 +41,39 @@ public class RatingController {
         if (result.hasErrors()) {
             return "newRating";
         }
-        Rating rating = new Rating();
-        rating.setFitchRating(ratingForm.getFitchRating());
-        rating.setMoodysRating(ratingForm.getMoodysRating());
-        rating.setSandPRating(ratingForm.getSandPRating());
-        rating.setOrderNumber(Long.valueOf(ratingForm.getOrderNumber()));
-        ratingService.saveRating(rating);
-        return "redirect:/ratingHomePage";
+
+        try {
+            Rating rating = new Rating();
+            rating.setFitchRating(ratingForm.getFitchRating());
+            rating.setMoodysRating(ratingForm.getMoodysRating());
+            rating.setSandPRating(ratingForm.getSandPRating());
+            rating.setOrderNumber(Long.valueOf(ratingForm.getOrderNumber()));
+
+            ratingService.saveRating(rating);
+
+            return "redirect:/ratingHomePage";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "newRating";
+        }
     }
 
     @GetMapping("/showFormForRatingListUpdate/{id}")
     public String showFormForRatingListUpdate(@PathVariable(value = "id") long id, Model model) {
-
-        Rating rating = ratingService.get(id);
-        model.addAttribute("rating", rating);
-        return "updateRating";
+        try {
+            Rating rating = ratingService.updateRating(id);
+            if (rating != null) {
+                model.addAttribute("rating", rating);
+                return "updateRating";
+            } else {
+                return "redirect:/ratingHomePage";
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "redirect:/ratingHomePage";
+        }
     }
+
 
     @GetMapping("/deleteRatingList/{id}")
     public String deleteRating(@PathVariable(value = "id") long id) {

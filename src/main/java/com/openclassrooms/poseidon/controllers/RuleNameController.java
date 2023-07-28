@@ -40,24 +40,38 @@ public class RuleNameController {
         if (result.hasErrors()) {
             return "newRuleName";
         }
-        RuleName ruleName = new RuleName();
-        ruleName.setName(ruleNameForm.getName());
-        ruleName.setJson(ruleNameForm.getJson());
-        ruleName.setDescription(ruleNameForm.getDescription());
-        ruleName.setTemplate(ruleNameForm.getTemplate());
-        ruleName.setSqlPart(ruleNameForm.getSqlPart());
-        ruleName.setSqlStr(ruleNameForm.getSqlStr());
-        ruleNameService.saveRuleName(ruleName);
-        return "redirect:/ruleNameHomePage";
+
+        try {
+            RuleName ruleName = new RuleName();
+            ruleName.setName(ruleNameForm.getName());
+            ruleName.setJson(ruleNameForm.getJson());
+            ruleName.setDescription(ruleNameForm.getDescription());
+            ruleName.setTemplate(ruleNameForm.getTemplate());
+            ruleName.setSqlPart(ruleNameForm.getSqlPart());
+            ruleName.setSqlStr(ruleNameForm.getSqlStr());
+
+            ruleNameService.saveRuleName(ruleName);
+
+            return "redirect:/ruleNameHomePage";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            return "newRuleName";
+        }
     }
+
 
     @GetMapping("/showFormForRuleNameUpdate/{id}")
     public String showFormForRuleNameUpdate(@PathVariable(value = "id") long id, Model model) {
-        RuleName ruleName = ruleNameService.getRuleName(id);
-        if (ruleName != null) {
-            model.addAttribute("ruleName", ruleName);
-            return "updateRuleName";
-        } else {
+        try {
+            RuleName ruleName = ruleNameService.updateRuleName(id);
+            if (ruleName != null) {
+                model.addAttribute("ruleName", ruleName);
+                return "updateRuleName";
+            } else {
+                return "redirect:/ruleNameHomePage";
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
             return "redirect:/ruleNameHomePage";
         }
     }
