@@ -25,7 +25,7 @@ In your computer, choose an application that allows your to create a dataBase. F
 ## Testing the application
 If you loaded the database creation file, there should be 2 pre-created users :
 - An admin account : `Username: Eric; Password: 1234`
-- A simple user account : `Username: toto; Password : 1234`
+- A simple user account : `Username: toto; Password :Hamza@240422`
 
 copy and paste it on your Url: [http://localhost:8080](http://localhost:8080) to start using the application
 
