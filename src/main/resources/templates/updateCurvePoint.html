@@ -12,12 +12,16 @@
 <div class="container">
   <h1>CurvePoint Management System</h1>
   <hr>
-  <h2>Update RuleName</h2>
+  <h2>Update CurvePoint</h2>
 
-  <form action="#" th:action="@{/saveCurvePoint}" th:object="${curvePoint}" method="POST">
+<!--  <form action="#" th:action="@{/updateCurvePoint}" th:object="${curvePointForm}" method="POST">-->
+  <form th:action="@{/updateCurvePoint/{id}(id=${curvePointForm.id})}" th:object="${curvePointForm}" method="POST">
 
-    <!-- Add hidden form field to handle update -->
-    <input type="hidden" th:field="*{id}" />
+
+  <!-- Add hidden form field to handle update -->
+<!--    <input type="hidden" th:field="*{id}" />-->
+
+    <input type="text" th:field="*{id}" class="form-control mb-4 col-4">
 
     <input type="text" th:field="*{asOfDate}" class="form-control mb-4 col-4">
 
@@ -29,7 +33,7 @@
 
     <input type="text" th:field="*{value}" class="form-control mb-4 col-4">
 
-    <button type="submit" class="btn btn-info col-2"> Update Rating</button>
+    <button type="submit" class="btn btn-info col-2"> Update CurvePoint</button>
   </form>
 
   <hr>

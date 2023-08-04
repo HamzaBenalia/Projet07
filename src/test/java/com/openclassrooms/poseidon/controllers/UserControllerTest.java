@@ -12,9 +12,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,12 +80,12 @@ public class UserControllerTest {
         // Faire une requête POST à /saveUser et vérifier que le statut est une redirection
         mvc.perform(post("/user/saveUser")
                         .with(csrf())
-                        .param("fullName", "John Doe")
-                        .param("username", "john_doe")
-                        .param("password", "Password1@")
+                        .param("fullName", "JohnDoe")
+                        .param("username", "doe")
+                        .param("password", "Password1@1112ha")
                         .param("role", "ADMIN"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/user"));
     }
 
     @Test
@@ -118,30 +120,40 @@ public class UserControllerTest {
 
 
 
+
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testShowFormForUpdate() throws Exception {
-        when(userService.updateUser(anyLong())).thenReturn(new Users());
+    public void showFormForUserUpdate_whenUserExists_returnsUpdateUserView() throws Exception {
+        // Given
+        Long id = 1L;
+        Users existingUser = new Users();
+        existingUser.setFullName("existingUser");
+        when(userService.findById(id)).thenReturn(Optional.of(existingUser));
 
-        mvc.perform(get("/user/showFormForUpdate/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("updateUser"));
+        // When / Then
+        mvc.perform(get("/user/showFormForUpdate/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("updateUser"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testShowFormForUpdate_Exception() throws Exception {
-        // Configurer userService pour lancer une exception
-        doThrow(new RuntimeException("Test exception")).when(userService).updateUser(anyLong());
+    public void updateUser_whenUserFormValid_returnsRedirectUserView() throws Exception {
+        // Given
+        Long id = 1L;
+        Users updatedUser = new Users();
+        updatedUser.setFullName("updatedUser");
+        when(userService.newUser(any(Long.class), any(Users.class))).thenReturn(updatedUser);
 
-        // Faire une requête GET à /showFormForUpdate/{id} et vérifier que le statut est une redirection
-        MvcResult result = mvc.perform(get("/user/showFormForUpdate/1"))
-                .andExpect(status().is3xxRedirection())
-                .andReturn();
-
-        // Vérifier que la redirection est vers le bon URL
-        assertEquals("redirect:/", result.getModelAndView().getViewName());
-
+        // When / Then
+        mvc.perform(post("/user/updateUser/{id}", id)
+                        .with(csrf())
+                        .param("fullName", "fifo")
+                        .param("username", "updatedUser")
+                        .param("password", "Password1@")
+                        .param("role", "USER"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/user"));
     }
 
 
@@ -152,7 +164,7 @@ public class UserControllerTest {
 
         mvc.perform(get("/user/deleteUser/1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/user"));
     }
 }
 

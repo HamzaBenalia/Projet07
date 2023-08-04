@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.controllers;
-
 import com.openclassrooms.poseidon.domain.BidList;
 import com.openclassrooms.poseidon.forms.BidListForm;
 import com.openclassrooms.poseidon.services.BidListService;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Optional;
 
 @Controller
 public class BidListController {
@@ -76,10 +77,10 @@ public class BidListController {
 
     @GetMapping("/showFormForBidListUpdate/{id}")
     public String showFormForBidListUpdate(@PathVariable(value = "id") Long id, Model model) {
-
         try {
-            BidList bidList = bidListService.updateBidList(id);
-            if (bidList != null) {
+            Optional<BidList> bidListOpt = bidListService.findById(id);
+            if (bidListOpt.isPresent()) {
+                BidList bidList = bidListOpt.get();
                 model.addAttribute("bidListForm", bidList);
                 return "updateBidList";
             } else {
@@ -88,6 +89,26 @@ public class BidListController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
             return "redirect:/bidListHomePage";
+        }
+    }
+
+    @PostMapping("/updateBidList/{id}")
+    public String updateBidList(@PathVariable(value = "id") Long id, @Valid @ModelAttribute("bidListForm") BidListForm bidListForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return "updateBidList";
+        }
+        try {
+            BidList updatedBidList = new BidList();
+            updatedBidList.setBidListId(Long.valueOf(bidListForm.getBidListId()));
+            updatedBidList.setAccount(bidListForm.getAccount());
+            updatedBidList.setType(bidListForm.getType());
+            updatedBidList.setBidQuantity(Double.valueOf(bidListForm.getBidQuantity()));
+
+            bidListService.newBidList(id, updatedBidList);
+            return "redirect:/bidListHomePage";
+        } catch (Exception exception) {
+            result.rejectValue("bidQuantity", "", "error : " + exception.getMessage());
+            return "updateBidList";
         }
     }
 

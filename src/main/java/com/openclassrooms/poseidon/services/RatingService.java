@@ -1,9 +1,7 @@
 package com.openclassrooms.poseidon.services;
-
 import com.openclassrooms.poseidon.domain.Rating;
-
 import java.util.List;
-
+import java.util.Optional;
 
 public interface RatingService {
 
@@ -11,10 +9,9 @@ public interface RatingService {
 
     List<Rating> listAll();
 
-//    List<Object[]> getAllRatings();
-//
+    Optional<Rating> findById(Long id);
 
-    //public Rating getRatingById(Long id);
+    Rating updateRating(Long id, Rating updatedRating);
 
     void delete(Long id);
 

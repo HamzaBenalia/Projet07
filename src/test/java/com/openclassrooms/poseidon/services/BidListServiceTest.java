@@ -14,9 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,6 +106,58 @@ public class BidListServiceTest {
         // Assert
         verify(bidListRepository).findById(id);
         assertThat(actualBidList).isEqualTo(expectedBidList);
+    }
+
+    @Test
+    public void newBidList_whenBidListExists_thenUpdatesAndReturnsBidList() {
+        // Given
+        Long id = 1L;
+        BidList existingBidList = new BidList();
+        existingBidList.setAccount("existingAccount");
+        BidList updatedBidList = new BidList();
+        updatedBidList.setAccount("updatedAccount");
+
+        when(bidListRepository.findById(id)).thenReturn(Optional.of(existingBidList));
+        when(bidListRepository.save(any(BidList.class))).thenReturn(updatedBidList);
+
+        // When
+        BidList result = bidListServiceImpl.newBidList(id, updatedBidList);
+
+        // Then
+        assertEquals(updatedBidList.getAccount(), result.getAccount());
+        verify(bidListRepository, times(1)).findById(id);
+        verify(bidListRepository, times(1)).save(any(BidList.class));
+    }
+
+    @Test
+    public void listAll_whenBidListsExist_returnsAllBidLists() {
+        // Given
+        BidList bidList1 = new BidList();
+        bidList1.setAccount("Account 1");
+        BidList bidList2 = new BidList();
+        bidList2.setAccount("Account 2");
+        when(bidListRepository.findAll()).thenReturn(Arrays.asList(bidList1, bidList2));
+
+        // When
+        List<BidList> result = bidListServiceImpl.listAll();
+
+        // Then
+        assertEquals(2, result.size());
+    }
+
+
+    @Test
+    public void newBidList_whenBidListNotExists_thenThrowsException() {
+        // Given
+        Long id = 1L;
+        BidList updatedBidList = new BidList();
+        updatedBidList.setAccount("updatedAccount");
+
+        when(bidListRepository.findById(id)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(RuntimeException.class, () -> bidListServiceImpl.newBidList(id, updatedBidList));
+        verify(bidListRepository, times(1)).findById(id);
     }
 
     @Test

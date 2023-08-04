@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -19,6 +20,9 @@ public class CurvePointControllerTest {
 
     @InjectMocks
     CurvePointController controller;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @Mock
     CurvePointService curvePointService;
@@ -58,6 +62,57 @@ public class CurvePointControllerTest {
     }
 
     @Test
+    public void showFormForCurvePointListUpdate_whenCurvePointPresent_returnsUpdateCurvePointView() {
+        // Given
+        when(curvePointService.findById(anyLong())).thenReturn(Optional.of(new CurvePoint()));
+
+        // When
+        String viewName = controller.showFormForCurvePointListUpdate(1L, model);
+
+        // Then
+        assertEquals("updateCurvePoint", viewName);
+    }
+
+    @Test
+    public void updateCurvePoint_whenFormHasErrors_returnsUpdateCurvePointView() {
+        // Given
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        // When
+        String viewName = controller.updateCurvePoint(1L, new CurvePointFrom(), bindingResult);
+
+        // Then
+        assertEquals("updateCurvePoint", viewName);
+    }
+
+
+    @Test
+    public void updateCurvePoint_whenNoErrorsAndExceptionOccurs_returnsUpdateCurvePointView() {
+        // Given
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(curvePointService.updateCurvePoint(anyLong(), any(CurvePoint.class))).thenThrow(RuntimeException.class);
+
+        // When
+        String viewName = controller.updateCurvePoint(1L, new CurvePointFrom(), bindingResult);
+
+        // Then
+        assertEquals("updateCurvePoint", viewName);
+    }
+
+    @Test
+    public void showFormForCurvePointListUpdate_whenCurvePointAbsent_returnsRedirectCurvePointHomePageView() {
+        // Given
+        when(curvePointService.findById(anyLong())).thenReturn(Optional.empty());
+
+        // When
+        String viewName = controller.showFormForCurvePointListUpdate(1L, model);
+
+        // Then
+        assertEquals("redirect:/curvePointHomePage", viewName);
+    }
+
+
+    @Test
     public void testSaveCurvePoint_WithErrors() {
         CurvePointFrom form = new CurvePointFrom();
         form.setCurveId("One");
@@ -81,29 +136,12 @@ public class CurvePointControllerTest {
         verify(model).addAttribute(eq("errorMessage"), anyString());
     }
 
-    @Test
-    public void testShowFormForCurvePointUpdate() {
-        CurvePoint curvePoint = new CurvePoint();
-        when(curvePointService.updateCurvePoint(any(Long.class))).thenReturn(curvePoint);
-        String view = controller.showFormForCurvePointListUpdate(1L, model);
-        verify(curvePointService, times(1)).updateCurvePoint(1L);
-        verify(model, times(1)).addAttribute("curvePoint", curvePoint);
-        assertEquals("updateCurvePoint", view);
-    }
 
-    @Test
-    public void testShowFormForCurvePointUpdate_NotFound() {
-        when(curvePointService.updateCurvePoint(any(Long.class))).thenReturn(null);
-        String view = controller.showFormForCurvePointListUpdate(1L, model);
-        verify(curvePointService, times(1)).updateCurvePoint(1L);
-        verify(model, times(0)).addAttribute(any(String.class), any());
-        assertEquals("redirect:/curvePointHomePage", view);
-    }
 
     @Test
     public void testDeleteCurvePoint() {
         String view = controller.deleteCurvePoint(1L);
         verify(curvePointService, times(1)).deleteCurvePoint(1L);
-        assertEquals("redirect:/ruleNameHomePage", view);  // Assurez-vous que cette redirection est correcte
+        assertEquals("redirect:/curvePointHomePage", view);  // Assurez-vous que cette redirection est correcte
     }
 }

@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,6 +81,56 @@ public class RatingServiceTest {
         // Assert
         verify(ratingRepository).findById(id);
         assertThat(actualRating).isEqualTo(expectedRating);
+    }
+
+
+    @Test
+    public void updateRating_whenRatingExists_thenUpdatesAndReturnsRating() {
+        // Given
+        Long id = 1L;
+        Rating existingRating = new Rating();
+        existingRating.setFitchRating("existingRating");
+        Rating updatedRating = new Rating();
+        updatedRating.setFitchRating("updatedRating");
+
+        when(ratingRepository.findById(id)).thenReturn(Optional.of(existingRating));
+        when(ratingRepository.save(any(Rating.class))).thenReturn(updatedRating);
+
+        // When
+        Rating result = ratingServiceImpl.updateRating(id, updatedRating);
+
+        // Then
+        assertEquals(updatedRating.getFitchRating(), result.getFitchRating());
+        verify(ratingRepository, times(1)).findById(id);
+        verify(ratingRepository, times(1)).save(any(Rating.class));
+    }
+
+    @Test
+    public void findById_whenRatingExists_returnsRating() {
+        // Given
+        Rating rating = new Rating();
+        rating.setMoodysRating("MoodysRating");
+        when(ratingRepository.findById(anyLong())).thenReturn(Optional.of(rating));
+
+        // When
+        Optional<Rating> result = ratingServiceImpl.findById(1L);
+
+        // Then
+        assertTrue(result.isPresent());
+    }
+
+    @Test
+    public void updateRating_whenRatingNotExists_thenThrowsException() {
+        // Given
+        Long id = 1L;
+        Rating updatedRating = new Rating();
+        updatedRating.setFitchRating("updatedRating");
+
+        when(ratingRepository.findById(id)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(RuntimeException.class, () -> ratingServiceImpl.updateRating(id, updatedRating));
+        verify(ratingRepository, times(1)).findById(id);
     }
 
     @Test

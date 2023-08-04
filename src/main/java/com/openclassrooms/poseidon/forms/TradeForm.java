@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.forms;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -11,13 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TradeForm {
 
+    private String tradeId;
+
     @NotBlank(message = "account is required")
     private String account;
 
     @NotBlank(message = "type is required")
     private String type;
 
-    @Pattern(message = "buyQuantity must be a number", regexp = "^[0-9]*$")
+    @Pattern(message = "buyQuantity must be a number", regexp = "^\\d+$")
     @NotBlank(message = "buyQuantity is required")
     private String buyQuantity;
 }

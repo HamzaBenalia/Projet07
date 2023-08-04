@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.configuration;
-
 import com.openclassrooms.poseidon.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

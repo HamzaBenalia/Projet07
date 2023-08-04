@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,23 +77,69 @@ public class TradeServiceTest {
 
 
     @Test
-    public void testGet() {
-        // Arrange
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Long id = 1234567890123456789L;
-        Trade expectedTrade = new Trade(
-                1234567891255552388L, "Hamza", "Admin", 20.0, 40.0, 50.0, 60.0, timestamp, "secured", "high", "ben", "high", "HarryPotter",
-                "Creation1", timestamp, "Revision1", timestamp, "Deal1", "DealType1", "SourceListId1", "Side1");
-        Optional<Trade> expectedOptional = Optional.of(expectedTrade);
+    public void updateTradeForm_whenTradeExists_returnsTrade() {
+        // Given
+        Long id = 1L;
+        Trade trade = new Trade();
+        trade.setTradeId(id);
+        when(tradeRepository.findById(id)).thenReturn(Optional.of(trade));
 
-        when(tradeRepository.findById(id)).thenReturn(expectedOptional);
+        // When
+        Trade result = tradeServiceImpl.updateTradeForm(id);
 
-        // Act
-        Trade actualTrade = tradeServiceImpl.updateTrade(id);
+        // Then
+        assertEquals(trade, result);
+    }
 
-        // Assert
-        verify(tradeRepository).findById(id);
-        assertThat(actualTrade).isEqualTo(expectedTrade);
+
+    @Test
+    public void findById_whenTradeExists_returnsTrade() {
+        // Given
+        Trade trade = new Trade();
+        trade.setAccount("Account");
+        when(tradeRepository.findById(anyLong())).thenReturn(Optional.of(trade));
+
+        // When
+        Optional<Trade> result = tradeServiceImpl.findById(1L);
+
+        // Then
+        assertTrue(result.isPresent());
+    }
+
+
+    @Test
+    public void updateTrade_whenTradeExists_thenUpdatesAndReturnsTrade() {
+        // Given
+        Long id = 1L;
+        Trade existingTrade = new Trade();
+        existingTrade.setAccount("existingAccount");
+        Trade updatedTrade = new Trade();
+        updatedTrade.setAccount("updatedAccount");
+
+        when(tradeRepository.findById(id)).thenReturn(Optional.of(existingTrade));
+        when(tradeRepository.save(any(Trade.class))).thenReturn(updatedTrade);
+
+        // When
+        Trade result = tradeServiceImpl.updateTrade(id, updatedTrade);
+
+        // Then
+        assertEquals(updatedTrade.getAccount(), result.getAccount());
+        verify(tradeRepository, times(1)).findById(id);
+        verify(tradeRepository, times(1)).save(any(Trade.class));
+    }
+
+    @Test
+    public void updateTrade_whenTradeNotExists_thenThrowsException() {
+        // Given
+        Long id = 1L;
+        Trade updatedTrade = new Trade();
+        updatedTrade.setAccount("updatedAccount");
+
+        when(tradeRepository.findById(id)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(RuntimeException.class, () -> tradeServiceImpl.updateTrade(id, updatedTrade));
+        verify(tradeRepository, times(1)).findById(id);
     }
 
 

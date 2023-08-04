@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -95,6 +98,58 @@ public class UserServiceTest {
         verify(userRepository).findById(id);
         assertThat(actualUser).isEqualTo(expectedUser);
     }
+
+    @Test
+    public void newUser_whenUserExists_thenUpdatesAndReturnsUser() {
+        // Given
+        Long id = 1L;
+        Users existingUser = new Users();
+        existingUser.setUsername("existingUser");
+        Users updatedUser = new Users();
+        updatedUser.setUsername("updatedUser");
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(Users.class))).thenReturn(updatedUser);
+
+        // When
+        Users result = userServiceImpl.newUser(id, updatedUser);
+
+        // Then
+        assertEquals(updatedUser.getUsername(), result.getUsername());
+        verify(userRepository, times(1)).findById(id);
+        verify(userRepository, times(1)).save(any(Users.class));
+    }
+
+    @Test
+    public void newUser_whenUserNotExists_thenThrowsException() {
+        // Given
+        Long id = 1L;
+        Users updatedUser = new Users();
+        updatedUser.setUsername("updatedUser");
+
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(RuntimeException.class, () -> userServiceImpl.newUser(id, updatedUser));
+        verify(userRepository, times(1)).findById(id);
+    }
+
+
+    @Test
+    public void findById_whenUserExists_returnsUser() {
+        // Given
+        Users user = new Users();
+        user.setFullName("John Doe");
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+        // When
+        Optional<Users> result = userServiceImpl.findById(1L);
+
+        // Then
+        assertTrue(result.isPresent());
+    }
+
+
 
     @Test
     public void testDeleteUser() {

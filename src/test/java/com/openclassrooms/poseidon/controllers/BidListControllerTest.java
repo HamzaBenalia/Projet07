@@ -17,6 +17,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -27,6 +28,9 @@ public class BidListControllerTest {
 
     @InjectMocks
     private BidListController controller;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @Mock
     private BidListService bidListService;
@@ -91,6 +95,31 @@ public class BidListControllerTest {
     }
 
     @Test
+    public void showFormForBidListUpdate_whenBidListPresent_returnsUpdateBidListView() {
+        // Given
+        when(bidListService.findById(anyLong())).thenReturn(Optional.of(new BidList()));
+
+        // When
+        String viewName = controller.showFormForBidListUpdate(1L, model);
+
+        // Then
+        assertEquals("updateBidList", viewName);
+    }
+
+    @Test
+    public void showFormForBidListUpdate_whenBidListAbsent_returnsRedirectBidListHomePageView() {
+        // Given
+        when(bidListService.findById(anyLong())).thenReturn(Optional.empty());
+
+        // When
+        String viewName = controller.showFormForBidListUpdate(1L, model);
+
+        // Then
+        assertEquals("redirect:/bidListHomePage", viewName);
+    }
+
+
+    @Test
     public void testSaveBidListWithException() {
         BidListForm bidListForm = new BidListForm();
         // set form fields here
@@ -105,22 +134,59 @@ public class BidListControllerTest {
     }
 
     @Test
-    public void testShowFormForBidListUpdate() {
-        BidList bidList = new BidList();
-        when(bidListService.updateBidList(any(Long.class))).thenReturn(bidList);
-        String view = controller.showFormForBidListUpdate(1L, model);
-        verify(bidListService, times(1)).updateBidList(1L);
-        verify(model, times(1)).addAttribute("bidListForm", bidList);
-        assertEquals("updateBidList", view);
+    public void updateBidList_whenFormHasErrors_returnsUpdateBidListView() {
+        // Given
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        // When
+        String viewName = controller.updateBidList(1L, new BidListForm(), bindingResult);
+
+        // Then
+        assertEquals("updateBidList", viewName);
     }
 
+//    @Test
+//    public void updateBidList_whenNoErrorsAndNoException_returnsRedirectBidListHomePageView() {
+//        // Given
+//
+//        BidListForm bidListForm = new BidListForm();
+//        bidListForm.setBidQuantity("RuleName1");
+//        bidListForm.setBidListId("1");
+//        bidListForm.setAccount("20");
+//        when(bindingResult.hasErrors()).thenReturn(false);
+//        when(bidListService.newBidList(anyLong(), any(BidList.class))).thenReturn(new BidList());
+//
+//        // When
+//        String viewName = controller.updateBidList(1L, new BidListForm(), bindingResult);
+//
+//        // Then
+//        assertEquals("redirect:/bidListHomePage", viewName);
+//    }
+
     @Test
-    public void testShowFormForBidListUpdate_NotFound() {
-        when(bidListService.updateBidList(any(Long.class))).thenReturn(null);
-        String view = controller.showFormForBidListUpdate(1L, model);
-        verify(bidListService, times(1)).updateBidList(1L);
-        verify(model, times(0)).addAttribute(any(String.class), any());
-        assertEquals("redirect:/bidListHomePage", view);
+    public void updateBidList_whenNoErrorsAndExceptionOccurs_returnsUpdateBidListView() {
+        // Given
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(bidListService.newBidList(anyLong(), any(BidList.class))).thenThrow(RuntimeException.class);
+
+        // When
+        String viewName = controller.updateBidList(1L, new BidListForm(), bindingResult);
+
+        // Then
+        assertEquals("updateBidList", viewName);
+    }
+
+
+    @Test
+    public void showFormForBidListUpdate_whenExceptionThrown_returnsRedirectBidListHomePageView() {
+        // Given
+        when(bidListService.findById(anyLong())).thenThrow(RuntimeException.class);
+
+        // When
+        String viewName = controller.showFormForBidListUpdate(1L, model);
+
+        // Then
+        assertEquals("redirect:/bidListHomePage", viewName);
     }
 
     @Test

@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.controllers;
-
 import com.openclassrooms.poseidon.domain.Rating;
 import com.openclassrooms.poseidon.forms.RatingForm;
 import com.openclassrooms.poseidon.services.RatingService;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Optional;
 
 @Controller
 public class RatingController {
@@ -59,11 +60,12 @@ public class RatingController {
     }
 
     @GetMapping("/showFormForRatingListUpdate/{id}")
-    public String showFormForRatingListUpdate(@PathVariable(value = "id") long id, Model model) {
+    public String showFormForRatingListUpdate(@PathVariable(value = "id") Long id, Model model) {
         try {
-            Rating rating = ratingService.updateRating(id);
-            if (rating != null) {
-                model.addAttribute("rating", rating);
+            Optional<Rating> ratingOpt = ratingService.findById(id);
+            if (ratingOpt.isPresent()) {
+                Rating rating = ratingOpt.get();
+                model.addAttribute("ratingForm", rating);
                 return "updateRating";
             } else {
                 return "redirect:/ratingHomePage";
@@ -71,6 +73,26 @@ public class RatingController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
             return "redirect:/ratingHomePage";
+        }
+    }
+
+    @PostMapping("/updateRating/{id}")
+    public String updateRating(@PathVariable(value = "id") Long id, @Valid @ModelAttribute("ratingForm") RatingForm ratingForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return "updateRating";
+        }
+        try {
+            Rating updatedRating = new Rating();
+            updatedRating.setFitchRating(ratingForm.getFitchRating());
+            updatedRating.setMoodysRating(ratingForm.getMoodysRating());
+            updatedRating.setSandPRating(ratingForm.getSandPRating());
+            updatedRating.setOrderNumber(Long.valueOf(ratingForm.getOrderNumber()));
+
+            ratingService.updateRating(id, updatedRating);
+            return "redirect:/ratingHomePage";
+        } catch (Exception exception) {
+            result.rejectValue("fitchRating", "", "error : " + exception.getMessage());
+            return "updateRating";
         }
     }
 

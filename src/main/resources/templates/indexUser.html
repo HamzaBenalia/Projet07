@@ -34,7 +34,7 @@
       <td th:text="${user.fullName}"></td>
       <td th:text="${user.role}"></td>
       <td> <a th:href="@{/user/showFormForUpdate/{id}(id=${user.id})}" class="btn btn-primary">Update</a>
-        <a th:href="@{/user/deleteEmployee/{id}(id=${user.id})}" class="btn btn-danger">Delete</a>
+        <a th:href="@{/user/deleteUser/{id}(id=${user.id})}" class="btn btn-danger">Delete</a>
       </td>
     </tr>
     </tbody>

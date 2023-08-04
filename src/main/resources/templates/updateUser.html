@@ -14,23 +14,31 @@
   <hr>
   <h2>Update Users</h2>
 
-  <form action="#" th:action="@{/user/saveUser}" th:object="${user}" method="POST">
+  <form th:action="@{/user/updateUser/{id}(id=${userForm.id})}" th:object="${userForm}" method="POST">
 
 
     <input type="text" th:field="*{username}" class="form-control mb-4 col-4">
+    <p th:errors="*{username}" class="text-danger" th:if="${#fields.hasErrors('username')}"></p>
+
 
     <input type="text" th:field="*{fullName}" class="form-control mb-4 col-4">
+    <p th:errors="*{fullName}" class="text-danger" th:if="${#fields.hasErrors('fullName')}"></p>
+
 
     <input type="text" th:field="*{role}" class="form-control mb-4 col-4">
+    <p th:errors="*{role}" class="text-danger" th:if="${#fields.hasErrors('role')}"></p>
+
 
     <input type="text" th:field="*{password}" class="form-control mb-4 col-4">
+    <p th:errors="*{password}" class="text-danger" th:if="${#fields.hasErrors('password')}"></p>
+
 
     <button type="submit" class="btn btn-info col-2"> Update Users</button>
   </form>
 
   <hr>
 
-  <a th:href="@{/}"> Back to User List</a>
+  <a th:href="@{/user}"> Back to User List</a>
 </div>
 </body>
 

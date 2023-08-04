@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.services;
-
 import com.openclassrooms.poseidon.domain.Users;
 import com.openclassrooms.poseidon.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

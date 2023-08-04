@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Optional;
+
 @Controller
 public class TradeController {
 
@@ -44,6 +46,7 @@ public class TradeController {
 
         try {
             Trade trade = new Trade();
+//            trade.setTradeId(Long.valueOf(tradeForm.getTradeId()));
             trade.setAccount(tradeForm.getAccount());
             trade.setBuyQuantity(Double.valueOf(tradeForm.getBuyQuantity()));
             trade.setType(tradeForm.getType());
@@ -57,13 +60,13 @@ public class TradeController {
         }
     }
 
-
     @GetMapping("/showFormForTradeUpdate/{tradeId}")
     public String showFormForTradeUpdate(@PathVariable(value = "tradeId") Long id, Model model) {
         try {
-            Trade trade = tradeService.updateTrade(id);
-            if (trade != null) {
-                model.addAttribute("trade", trade);
+            Optional<Trade> tradeOpt = tradeService.findById(id);
+            if (tradeOpt.isPresent()) {
+                Trade trade = tradeOpt.get();
+                model.addAttribute("tradeForm", trade);
                 return "updateTrade";
             } else {
                 return "redirect:/tradeHomePage";
@@ -71,6 +74,26 @@ public class TradeController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
             return "redirect:/tradeHomePage";
+        }
+    }
+
+    @PostMapping("/updateTrade/{tradeId}")
+    public String updateTrade(@PathVariable(value = "tradeId") Long tradeId, @Valid @ModelAttribute("tradeForm") TradeForm tradeForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return "updateTrade";
+        }
+        try {
+            Trade updatedTrade = new Trade();
+//            updatedTrade.setTradeId(Long.valueOf(tradeForm.getTradeId()));
+            updatedTrade.setAccount(tradeForm.getAccount());
+            updatedTrade.setBuyQuantity(Double.valueOf(tradeForm.getBuyQuantity()));
+            updatedTrade.setType(tradeForm.getType());
+
+            tradeService.updateTrade(tradeId, updatedTrade);
+            return "redirect:/tradeHomePage";
+        } catch (Exception exception) {
+            result.rejectValue("account", "", "error : " + exception.getMessage());
+            return "updateTrade";
         }
     }
 

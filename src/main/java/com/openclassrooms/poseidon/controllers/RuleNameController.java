@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.controllers;
-
 import com.openclassrooms.poseidon.domain.RuleName;
 import com.openclassrooms.poseidon.forms.RuleNameForm;
 import com.openclassrooms.poseidon.services.RuleNameService;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Optional;
 
 @Controller
 public class RuleNameController {
@@ -59,13 +60,13 @@ public class RuleNameController {
         }
     }
 
-
     @GetMapping("/showFormForRuleNameUpdate/{id}")
-    public String showFormForRuleNameUpdate(@PathVariable(value = "id") long id, Model model) {
+    public String showFormForRuleNameUpdate(@PathVariable(value = "id") Long id, Model model) {
         try {
-            RuleName ruleName = ruleNameService.updateRuleName(id);
-            if (ruleName != null) {
-                model.addAttribute("ruleName", ruleName);
+            Optional<RuleName> ruleNameOpt = ruleNameService.findById(id);
+            if (ruleNameOpt.isPresent()) {
+                RuleName ruleName = ruleNameOpt.get();
+                model.addAttribute("ruleNameForm", ruleName);
                 return "updateRuleName";
             } else {
                 return "redirect:/ruleNameHomePage";
@@ -75,6 +76,29 @@ public class RuleNameController {
             return "redirect:/ruleNameHomePage";
         }
     }
+
+    @PostMapping("/updateRuleName/{id}")
+    public String updateRuleName(@PathVariable(value = "id") Long id, @Valid @ModelAttribute("ruleNameForm") RuleNameForm ruleNameForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return "updateRuleName";
+        }
+        try {
+            RuleName updatedRuleName = new RuleName();
+            updatedRuleName.setName(ruleNameForm.getName());
+            updatedRuleName.setJson(ruleNameForm.getJson());
+            updatedRuleName.setDescription(ruleNameForm.getDescription());
+            updatedRuleName.setTemplate(ruleNameForm.getTemplate());
+            updatedRuleName.setSqlPart(ruleNameForm.getSqlPart());
+            updatedRuleName.setSqlStr(ruleNameForm.getSqlStr());
+
+            ruleNameService.updateRuleName(id, updatedRuleName);
+            return "redirect:/ruleNameHomePage";
+        } catch (Exception exception) {
+            result.rejectValue("name", "", "error : " + exception.getMessage());
+            return "updateRuleName";
+        }
+    }
+
 
     @GetMapping("/deleteRuleName/{id}")
     public String deleteRuleName(@PathVariable(value = "id") long id) {

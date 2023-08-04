@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.forms;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;

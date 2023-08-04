@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -21,6 +23,9 @@ public class RuleNameControllerTest {
 
     @Mock
     RuleNameService ruleNameService;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @Mock
     Model model;
@@ -54,6 +59,44 @@ public class RuleNameControllerTest {
     }
 
     @Test
+    public void updateRuleName_whenResultHasErrors_returnsUpdateRuleNameView() {
+        // Given
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        // When
+        String viewName = controller.updateRuleName(1L, new RuleNameForm(), bindingResult);
+
+        // Then
+        assertEquals("updateRuleName", viewName);
+    }
+
+    @Test
+    public void updateRuleName_whenResultHasNoErrorsAndNoExceptions_returnsRedirectRuleNameHomePageView() {
+        // Given
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        // When
+        String viewName = controller.updateRuleName(1L, new RuleNameForm(), bindingResult);
+
+        // Then
+        assertEquals("redirect:/ruleNameHomePage", viewName);
+    }
+
+    @Test
+    public void showFormForRuleNameUpdate_whenRuleNameExists_returnsUpdateRuleNameView() {
+        // Given
+        RuleName ruleName = new RuleName();
+        ruleName.setName("RuleName1");
+        when(ruleNameService.findById(anyLong())).thenReturn(Optional.of(ruleName));
+
+        // When
+        String viewName = controller.showFormForRuleNameUpdate(1L, model);
+
+        // Then
+        assertEquals("updateRuleName", viewName);
+    }
+
+    @Test
     public void testSaveRuleName_WithErrors() {
         RuleNameForm form = new RuleNameForm();
         when(result.hasErrors()).thenReturn(true);
@@ -75,32 +118,6 @@ public class RuleNameControllerTest {
         assertEquals("newRuleName", view);
         verify(model).addAttribute(eq("errorMessage"), anyString());
     }
-
-    @Test
-    public void testShowFormForRuleNameUpdate_RuleNameFound() {
-        RuleName ruleName = new RuleName();
-        when(ruleNameService.updateRuleName(any(Long.class))).thenReturn(ruleName);
-
-        String view = controller.showFormForRuleNameUpdate(1L, model);
-
-        verify(ruleNameService, times(1)).updateRuleName(1L);
-        verify(model, times(1)).addAttribute("ruleName", ruleName);
-
-        assertEquals("updateRuleName", view);
-    }
-
-    @Test
-    public void testShowFormForRuleNameUpdate_RuleNameNotFound() {
-        when(ruleNameService.updateRuleName(any(Long.class))).thenReturn(null);
-
-        String view = controller.showFormForRuleNameUpdate(1L, model);
-
-        verify(ruleNameService, times(1)).updateRuleName(1L);
-        verify(model, times(0)).addAttribute(any(String.class), any());
-
-        assertEquals("redirect:/ruleNameHomePage", view);
-    }
-
 
     @Test
     public void testDeleteRuleName() {

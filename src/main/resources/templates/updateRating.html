@@ -14,10 +14,13 @@
   <hr>
   <h2>Update Rating</h2>
 
-  <form action="#" th:action="@{/saveRating}" th:object="${rating}" method="POST">
+<!--  <form action="#" th:action="@{/saveRating}" th:object="${ratingForm}" method="POST">-->
 
-    <!-- Add hidden form field to handle update -->
-    <input type="hidden" th:field="*{id}" />
+  <form th:action="@{/updateRating/{id}(id=${ratingForm.id})}" th:object="${ratingForm}" method="POST">
+
+
+  <!-- Add hidden form field to handle update -->
+<!--    <input type="hidden" th:field="*{id}" />-->
 
     <input type="text" th:field="*{moodysRating}" class="form-control mb-4 col-4">
 

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -24,6 +25,9 @@ public class RatingControllerTest {
 
     @Mock
     RatingService ratingService;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @Mock
     Model model;
@@ -72,16 +76,38 @@ public class RatingControllerTest {
         verify(model).addAttribute(eq("errorMessage"), anyString());
     }
 
+    @Test
+    public void showFormForRatingListUpdate_whenRatingExists_returnsUpdateRatingView() {
+        // Given
+        Rating rating = new Rating();
+        rating.setMoodysRating("MoodysRating");
+        when(ratingService.findById(anyLong())).thenReturn(Optional.of(rating));
+
+        // When
+        String viewName = controller.showFormForRatingListUpdate(1L, model);
+
+        // Then
+        assertEquals("updateRating", viewName);
+    }
 
     @Test
-    public void testShowFormForRatingListUpdate() {
-        Rating rating = new Rating();
-        when(ratingService.updateRating(any(Long.class))).thenReturn(rating);
-        String view = controller.showFormForRatingListUpdate(1L, model);
-        verify(ratingService, times(1)).updateRating(1L);
-        verify(model, times(1)).addAttribute("rating", rating);
-        assertEquals("updateRating", view);
+    public void updateRating_whenNoErrorsInForm_returnsRedirectRatingHomePageView() {
+        // Given
+        RatingForm ratingForm = new RatingForm();
+        ratingForm.setFitchRating("FitchRating");
+        ratingForm.setOrderNumber("2");
+        ratingForm.setMoodysRating("5");
+        ratingForm.setId("1L");
+        ratingForm.setSandPRating("5");
+
+        // When
+        String viewName = controller.updateRating(1L, ratingForm, bindingResult);
+
+        // Then
+        assertEquals("redirect:/ratingHomePage", viewName);
     }
+
+
 
     @Test
     public void testDeleteRating() {

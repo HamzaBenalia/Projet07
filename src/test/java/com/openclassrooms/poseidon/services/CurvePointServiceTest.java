@@ -18,10 +18,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,6 +72,60 @@ public class CurvePointServiceTest {
         // Assert
         verify(curvePointRepository).findAll();
         assertThat(actualRating).isEqualTo(expectedCurvePoint);
+    }
+
+
+
+    @Test
+    public void updateCurvePoint_whenCurvePointExists_thenUpdatesAndReturnsCurvePoint() {
+        // Given
+        Long id = 1L;
+        CurvePoint existingCurvePoint = new CurvePoint();
+        existingCurvePoint.setCurveId(1L);
+        CurvePoint updatedCurvePoint = new CurvePoint();
+        updatedCurvePoint.setCurveId(2L);
+
+        when(curvePointRepository.findById(id)).thenReturn(Optional.of(existingCurvePoint));
+        when(curvePointRepository.save(any(CurvePoint.class))).thenReturn(updatedCurvePoint);
+
+        // When
+        CurvePoint result = curvePointServiceImpl.updateCurvePoint(id, updatedCurvePoint);
+
+        // Then
+        assertEquals(updatedCurvePoint.getCurveId(), result.getCurveId());
+        verify(curvePointRepository, times(1)).findById(id);
+        verify(curvePointRepository, times(1)).save(any(CurvePoint.class));
+    }
+
+    @Test
+    public void listAll_whenCurvePointsExist_returnsAllCurvePoints() {
+        // Given
+        CurvePoint curvePoint1 = new CurvePoint();
+        curvePoint1.setCurveId(1L);
+        CurvePoint curvePoint2 = new CurvePoint();
+        curvePoint2.setCurveId(2L);
+        when(curvePointRepository.findAll()).thenReturn(Arrays.asList(curvePoint1, curvePoint2));
+
+        // When
+        List<CurvePoint> result = curvePointServiceImpl.listAll();
+
+        // Then
+        assertEquals(2, result.size());
+    }
+
+
+    @Test
+    public void updateCurvePoint_whenCurvePointNotExists_thenThrowsException() {
+        // Given
+        Long id = 1L;
+        CurvePoint updatedCurvePoint = new CurvePoint();
+        updatedCurvePoint.setCurveId(2L);
+
+        when(curvePointRepository.findById(id)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(RuntimeException.class, () -> curvePointServiceImpl.updateCurvePoint(id, updatedCurvePoint));
+        verify(curvePointRepository, times(1)).findById(id);
     }
 
 

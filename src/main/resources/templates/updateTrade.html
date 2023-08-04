@@ -14,10 +14,13 @@
   <hr>
   <h2>Update Trade</h2>
 
-  <form action="#" th:action="@{/saveTrade}" th:object="${trade}" method="POST">
+<!--  <form action="#" th:action="@{/saveTrade}" th:object="${tradeForm}" method="POST">-->
 
-    <!-- Add hidden form field to handle update -->
-    <input type="hidden" th:field="*{tradeId}" />
+  <form th:action="@{/updateTrade/{tradeId}(tradeId=${tradeForm.tradeId})}" th:object="${tradeForm}" method="POST">
+
+
+  <!-- Add hidden form field to handle update -->
+<!--    <input type="hidden" th:field="*{tradeId}" />-->
 
     <input type="text" th:field="*{account}" class="form-control mb-4 col-4">
 

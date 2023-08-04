@@ -1,5 +1,4 @@
 package com.openclassrooms.poseidon.controllers;
-
 import com.openclassrooms.poseidon.domain.CurvePoint;
 import com.openclassrooms.poseidon.forms.CurvePointFrom;
 import com.openclassrooms.poseidon.services.CurvePointService;
@@ -12,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Controller
 public class CurvePointController {
@@ -65,11 +64,12 @@ public class CurvePointController {
     }
 
     @GetMapping("/showFormForCurvePointUpdate/{id}")
-    public String showFormForCurvePointListUpdate(@PathVariable(value = "id") long id, Model model) {
+    public String showFormForCurvePointListUpdate(@PathVariable(value = "id") Long id, Model model) {
         try {
-            CurvePoint curvePoint = curvePointService.updateCurvePoint(id);
-            if (curvePoint != null) {
-                model.addAttribute("curvePoint", curvePoint);
+            Optional<CurvePoint> curvePointOpt = curvePointService.findById(id);
+            if (curvePointOpt.isPresent()) {
+                CurvePoint curvePoint = curvePointOpt.get();
+                model.addAttribute("curvePointForm", curvePoint);
                 return "updateCurvePoint";
             } else {
                 return "redirect:/curvePointHomePage";
@@ -80,12 +80,34 @@ public class CurvePointController {
         }
     }
 
+    @PostMapping("/updateCurvePoint/{id}")
+    public String updateCurvePoint(@PathVariable(value = "id") Long id, @Valid @ModelAttribute("curvePointForm") CurvePointFrom curvePointForm, BindingResult result) {
+        if (result.hasErrors()) {
+            return "updateCurvePoint";
+        }
+        try {
+            CurvePoint updatedCurvePoint = new CurvePoint();
+            updatedCurvePoint.setCurveId(Long.valueOf(curvePointForm.getCurveId()));
+            updatedCurvePoint.setValue(Double.valueOf(curvePointForm.getValue()));
+            updatedCurvePoint.setTerm(Double.valueOf(curvePointForm.getTerm()));
+            Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+            updatedCurvePoint.setAsOfDate(now);
+            updatedCurvePoint.setCreationDate(now);
+
+            curvePointService.updateCurvePoint(id, updatedCurvePoint);
+            return "redirect:/curvePointHomePage";
+        } catch (Exception exception) {
+            result.rejectValue("value", "", "error : " + exception.getMessage());
+            return "updateCurvePoint";
+        }
+    }
+
 
     @GetMapping("/deleteCurvePoint/{id}")
     public String deleteCurvePoint(@PathVariable(value = "id") long id) {
 
         // call delete employee method
         this.curvePointService.deleteCurvePoint(id);
-        return "redirect:/ruleNameHomePage";
+        return "redirect:/curvePointHomePage";
     }
 }
